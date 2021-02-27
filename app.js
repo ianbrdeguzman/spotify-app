@@ -90,6 +90,7 @@ class APPController {
                 const data = await APIController.getPlaylistByGenre(categoryId, token);
                 const playlist = data.playlists.items;
                 UIController.clearDOM(genreDOM);
+                UIController.hideContainer(genreDOM);
                 playlist.forEach( (playlist) => UIController.createPlaylist(playlist));
             }
         });
@@ -100,6 +101,7 @@ class APPController {
                 const trackEndpoint = e.target.dataset.track;
                 const data = await APIController.getTracks(token, trackEndpoint);
                 UIController.clearDOM(playlistDOM);
+                UIController.hideContainer(playlistDOM);
                 data.forEach( (track) => UIController.createTrack(track.track));
             }
         });
@@ -112,6 +114,7 @@ class APPController {
                 const id = e.target.dataset.uri.slice(14);
                 const data = await APIController.getTrackDetail(id, token);
                 UIController.clearDOM(tracklistDOM);
+                UIController.hideContainer(tracklistDOM);
                 UIController.createPlayer(uri, data);
             }
         });
@@ -192,7 +195,7 @@ class UIController {
         const image = data.album.images[0].url
         const widget =
         `
-        <button id="back"><a href="https://github.com/ianbrdeguzman/spotify-app">back</a></button>
+        <button id="back"><a href="https://ianbrdeguzman.github.io/spotify-app/">back</a></button>
         <button id="github"><a href="https://github.com/ianbrdeguzman/spotify-app">github</a></button>
         <div class="img-container">
             <img src="${image}" alt="${data.name}">
@@ -201,6 +204,7 @@ class UIController {
         `
         
         playerDOM.insertAdjacentHTML('beforeend', widget);
+        document.body.style.overflow = 'hidden';
         APPController.scrollTo();
     }
     // clears container
@@ -208,6 +212,10 @@ class UIController {
         while (container.childNodes.length > 0) {
             container.removeChild(container.childNodes[0]);
         }
+    }
+
+    static hideContainer(container) {
+        container.style.display = 'none';
     }
 }
 

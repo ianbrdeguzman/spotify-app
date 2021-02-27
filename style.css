@@ -84,7 +84,7 @@ header h1 {
 }
 .player-container .img-container,
 iframe {
-    width: 100wv;
+    width: 100vw;
     max-width: 640px;
 }
 .player-container .img-container img {
