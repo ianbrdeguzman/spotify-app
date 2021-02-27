@@ -177,7 +177,7 @@ class UIController {
         const widget =
         `
         <button id="back"><a href="/">back</a></button>
-        <button id="github"><a href="">github</a></button>
+        <button id="github"><a href="https://github.com/ianbrdeguzman/spotify-app">github</a></button>
         <div class="img-container">
             <img src="${image}" alt="${data.name}">
         </div>
