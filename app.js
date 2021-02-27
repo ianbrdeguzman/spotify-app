@@ -1,10 +1,13 @@
+// HTML DOM elements
 const appContainer = document.querySelector('.app-container');
 const genreDOM = document.querySelector('.genre-container');
 const playlistDOM = document.querySelector('.playlist-container');
 const tracklistDOM = document.querySelector('.track-container');
 const playerDOM = document.querySelector('.player-container');
 
+// Controls all API functionality
 class APIController {
+    // fetch token
     static async getToken() {
         const TOKEN_ENDPOINT = 'https://accounts.spotify.com/api/token';
         const clientId = '5829ebebc11e4ff098a801a50a65f20c';
@@ -18,13 +21,12 @@ class APIController {
             },
             body: 'grant_type=client_credentials',
         })
-
         const data = await response.json();
         return data.access_token;
     }
-
+    // fetch genres
     static async getGenres(token) {
-        const GENRE_ENDPOINT = 'https://api.spotify.com/v1/browse/categories?locale=sv_US';
+        const GENRE_ENDPOINT = 'https://api.spotify.com/v1/browse/categories?locale=sv_CA';
         const result = await fetch(GENRE_ENDPOINT, {
             method: 'GET',
             headers: {
@@ -35,7 +37,7 @@ class APIController {
         const data = await result.json();
         return data.categories.items;
     }
-
+    // fetch playlist
     static async getPlaylistByGenre(id, token) {
         
         const PBG_ENDPOINT = `https://api.spotify.com/v1/browse/categories/${id}/playlists`
@@ -49,7 +51,7 @@ class APIController {
         const data = await result.json()
         return data;
     }
-
+    // fetch tracks
     static async getTracks(token, trackEndpoint) {
         const result = await fetch(trackEndpoint, {
             method: 'GET',
@@ -61,7 +63,7 @@ class APIController {
         const data = await result.json();
         return data.items;
     }
-
+    // fetch track detail
     static async getTrackDetail(id, token) {
         const TRC_ENDPOINT = `https://api.spotify.com/v1/tracks/${id}`
         const result = await fetch(TRC_ENDPOINT, {
@@ -76,10 +78,11 @@ class APIController {
     }
 }
 
+// Controls all App functionality
 class APPController {
     static setUp() {
         this.loadGenre();
-
+        // add click event listener to genre container
         genreDOM.addEventListener('click', async (e) => {
             if(e.target.localName === 'img') {
                 const token = StorageController.getStoredToken();
@@ -90,7 +93,7 @@ class APPController {
                 playlist.forEach( (playlist) => UIController.createPlaylist(playlist));
             }
         });
-
+        // add click event listener to playlist container
         playlistDOM.addEventListener('click', async (e) => {
             if(e.target.localName === 'img') {
                 const token = StorageController.getStoredToken();
@@ -100,7 +103,7 @@ class APPController {
                 data.forEach( (track) => UIController.createTrack(track.track));
             }
         });
-
+        // add click event listener to tracklist container
         tracklistDOM.addEventListener('click', async (e) => {
             if(e.target.localName === 'img') {
                 const token = StorageController.getStoredToken();
@@ -113,16 +116,26 @@ class APPController {
             }
         });
     }
-
+    // load genre
     static async loadGenre() {
         const token = await APIController.getToken();
         StorageController.saveToken(token);
         const genres = await APIController.getGenres(token);
-        genres.forEach( (genre) => UIController.createGenre(genre))
+        genres.forEach( (genre) => UIController.createGenre(genre));
+    }
+    // scroll to top function
+    static scrollTo() {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        })
     }
 }
 
+// Controlls all UI
 class UIController {
+    // creates genre item
     static createGenre(genre) {
         const genreIcon = genre.icons[0].url;
         const html =
@@ -137,8 +150,9 @@ class UIController {
         </div>
         `
         genreDOM.insertAdjacentHTML('beforeend', html);
+        APPController.scrollTo();
     }
-
+    // creates playlist item
     static createPlaylist(playlist) {
         const playlistEndpoint = playlist.tracks.href;
         const playlistIcon = playlist.images[0].url;
@@ -154,10 +168,11 @@ class UIController {
         </div>
         `
         playlistDOM.insertAdjacentHTML('beforeend', html);
+        APPController.scrollTo();
     }
-    
+    // creates track item
     static createTrack(track) {
-        const image = track.album.images[1].url;
+        const image = track.album.images[0].url;
         const html =
         `
         <div class="tracklist-item">
@@ -170,8 +185,9 @@ class UIController {
         </div>
         `
         tracklistDOM.insertAdjacentHTML('beforeend', html);
+        APPController.scrollTo();
     }
-
+    // creates spotify widget
     static createPlayer(uri, data) {
         const image = data.album.images[0].url
         const widget =
@@ -185,8 +201,9 @@ class UIController {
         `
         
         playerDOM.insertAdjacentHTML('beforeend', widget);
+        APPController.scrollTo();
     }
-
+    // clears container
     static clearDOM(container) {
         while (container.childNodes.length > 0) {
             container.removeChild(container.childNodes[0]);
@@ -194,14 +211,17 @@ class UIController {
     }
 }
 
+// Controll Storage
 class StorageController {
+    // stores token in local storage
     static saveToken(token) {
         localStorage.setItem('token', token)
     }
-
+    // gets token from local storage
     static getStoredToken() {
         return localStorage.getItem('token');
     }
 }
 
-addEventListener('DOMContentLoaded', APPController.setUp());
+// start app
+APPController.setUp();
