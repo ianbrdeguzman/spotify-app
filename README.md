@@ -1,6 +1,6 @@
 # Spotify App
 
-Check it out [here!]()
+Check it out [here!](https://ianbrdeguzman.github.io/spotify-app/)
 
 #### Created using:
 
