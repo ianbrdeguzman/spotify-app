@@ -192,7 +192,7 @@ class UIController {
         const image = data.album.images[0].url
         const widget =
         `
-        <button id="back"><a href="/">back</a></button>
+        <button id="back"><a href="https://github.com/ianbrdeguzman/spotify-app">back</a></button>
         <button id="github"><a href="https://github.com/ianbrdeguzman/spotify-app">github</a></button>
         <div class="img-container">
             <img src="${image}" alt="${data.name}">
